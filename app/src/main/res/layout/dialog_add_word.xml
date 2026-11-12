@@ -61,7 +61,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:text="新词会自动进入艾宾浩斯复习队列，5 分钟后第一次复习"
+        android:text="新词会直接进入艾宾浩斯复习队列，现在就可以开始复习"
         android:textColor="@color/text_tertiary"
         android:textSize="11sp" />
 </LinearLayout>

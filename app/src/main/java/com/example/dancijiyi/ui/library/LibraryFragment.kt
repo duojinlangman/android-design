@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -174,7 +173,7 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
             return
         }
         val options = arrayOf("重命名", "删除词库")
-        AlertDialog.Builder(requireContext())
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle(book.name)
             .setItems(options) { _, which ->
                 if (which == 0) renameBook(book) else confirmDeleteBook(book)
