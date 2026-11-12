@@ -1,3 +1,7 @@
 <resources>
-    <string name="app_name">dancijiyi</string>
+    <string name="app_name">单词记忆</string>
+    <string name="nav_dashboard">看板</string>
+    <string name="nav_review">复习</string>
+    <string name="nav_library">词库</string>
+    <string name="nav_quiz">测试</string>
 </resources>

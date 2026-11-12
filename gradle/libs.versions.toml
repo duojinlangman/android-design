@@ -1,5 +1,6 @@
 [versions]
 agp = "9.1.0-alpha01"
+ksp = "2.3.6"
 coreKtx = "1.10.1"
 junit = "4.13.2"
 junitVersion = "1.1.5"
@@ -21,4 +22,4 @@ androidx-constraintlayout = { group = "androidx.constraintlayout", name = "const
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" } # 补充 KSP 插件声明
