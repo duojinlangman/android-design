@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- 主色：青绿系 -->
+    <color name="brand">#0F766E</color>
+    <color name="brand_dark">#0B4F4A</color>
+    <color name="brand_light">#CCFBF1</color>
+    <color name="brand_mid">#14B8A6</color>
+
+    <!-- 强调色 -->
+    <color name="accent">#F59E0B</color>
+    <color name="accent_light">#FEF3C7</color>
+
+    <!-- 背景与文字 -->
+    <color name="bg">#F3F8F6</color>
+    <color name="surface">#FFFFFFFF</color>
+    <color name="text_primary">#10231F</color>
+    <color name="text_secondary">#5B736E</color>
+    <color name="text_tertiary">#8FA6A1</color>
+    <color name="divider">#E4EDEA</color>
+
+    <!-- 状态色 -->
+    <color name="success">#16A34A</color>
+    <color name="success_light">#DCFCE7</color>
+    <color name="warning">#F59E0B</color>
+    <color name="warning_light">#FEF3C7</color>
+    <color name="danger">#DC2626</color>
+    <color name="danger_light">#FEE2E2</color>
+    <color name="info">#2563EB</color>
+</resources>

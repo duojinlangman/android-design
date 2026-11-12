@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/tab_dashboard"
+        android:icon="@drawable/ic_dashboard"
+        android:title="@string/nav_dashboard" />
+    <item
+        android:id="@+id/tab_review"
+        android:icon="@drawable/ic_review"
+        android:title="@string/nav_review" />
+    <item
+        android:id="@+id/tab_library"
+        android:icon="@drawable/ic_library"
+        android:title="@string/nav_library" />
+    <item
+        android:id="@+id/tab_quiz"
+        android:icon="@drawable/ic_quiz"
+        android:title="@string/nav_quiz" />
+</menu>
