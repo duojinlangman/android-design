@@ -6,6 +6,8 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.dancijiyi.DanciApp
 import com.example.dancijiyi.R
+import com.example.dancijiyi.data.ReviewQuota
+import com.example.dancijiyi.ui.ReviewQuotaDialog
 import com.example.dancijiyi.ui.quiz.QuizActivity
 import com.example.dancijiyi.ui.study.StudyActivity
 import com.example.dancijiyi.ui.toast
@@ -35,6 +37,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     private lateinit var tvLearning: TextView
     private lateinit var tvNewCount: TextView
     private lateinit var tvTotalWords: TextView
+    private lateinit var btnStartReview: com.google.android.material.button.MaterialButton
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,6 +59,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
         tvLearning = view.findViewById(R.id.tvLearning)
         tvNewCount = view.findViewById(R.id.tvNewCount)
         tvTotalWords = view.findViewById(R.id.tvTotalWords)
+        btnStartReview = view.findViewById(R.id.btnStartReview)
 
         val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
         tvGreeting.text = when {
@@ -65,8 +69,9 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             else -> "晚上好，巩固今天的词"
         }
 
-        view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnStartReview)
-            .setOnClickListener { startReview() }
+        btnStartReview.setOnClickListener { startReview() }
+        // 点顶部「待复习 X 词」这个胶囊即可修改每天复习的单词个数
+        tvDueChip.setOnClickListener { ReviewQuotaDialog.show(requireContext()) { refresh() } }
         view.findViewById<com.google.android.material.button.MaterialButton>(R.id.btnStartQuiz)
             .setOnClickListener { QuizActivity.start(requireContext(), 10) }
     }
@@ -86,6 +91,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
             "今日新增 ${stats.todayLearned} · 已复习 ${stats.todayReviewed} · 正确率 ${stats.todayAccuracy}%"
         tvStreak.text = "连续打卡 ${stats.streakDays} 天"
         tvDueChip.text = "待复习 ${stats.dueNow} 词"
+        btnStartReview.text = "开始复习 ${ReviewQuota.get(requireContext())} 个"
 
         tvDue.text = stats.dueNow.toString()
         tvDueSub.text = "到期需巩固"
@@ -106,7 +112,7 @@ class DashboardFragment : Fragment(R.layout.fragment_dashboard) {
     }
 
     private fun startReview() {
-        val due = repo.dueWords(50)
+        val due = repo.dueWords(ReviewQuota.get(requireContext()))
         if (due.isEmpty()) {
             requireContext().toast("现在没有到期单词，去词库加点新词吧")
             return
