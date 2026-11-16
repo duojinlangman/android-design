@@ -43,7 +43,7 @@
                 android:paddingRight="7dp"
                 android:paddingBottom="2dp"
                 android:textColor="@color/brand_dark"
-                android:textSize="9sp" />
+                android:textSize="11sp" />
         </LinearLayout>
 
         <TextView
