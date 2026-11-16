@@ -9,17 +9,19 @@
     <color name="brand_light">#CCFBF1</color>
     <color name="brand_mid">#14B8A6</color>
 
-    <!-- 强调色 -->
+    <!-- 强调色：accent 用于色块/图表，accent_text 专用于文字（对比度更高） -->
     <color name="accent">#F59E0B</color>
+    <color name="accent_text">#B45309</color>
     <color name="accent_light">#FEF3C7</color>
 
-    <!-- 背景与文字 -->
-    <color name="bg">#F3F8F6</color>
+    <!-- 背景与文字：提高对比度，正文近黑、说明文字加重 -->
+    <color name="bg">#EFF6F4</color>
     <color name="surface">#FFFFFFFF</color>
-    <color name="text_primary">#10231F</color>
-    <color name="text_secondary">#5B736E</color>
-    <color name="text_tertiary">#8FA6A1</color>
-    <color name="divider">#E4EDEA</color>
+    <color name="text_primary">#0A1C18</color>
+    <color name="text_secondary">#3F5954</color>
+    <color name="text_tertiary">#627C76</color>
+    <color name="divider">#D6E4E0</color>
+    <color name="card_stroke">#DEEAE7</color>
 
     <!-- 状态色 -->
     <color name="success">#16A34A</color>
