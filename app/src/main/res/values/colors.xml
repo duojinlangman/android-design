@@ -20,6 +20,8 @@
     <color name="text_primary">#0A1C18</color>
     <color name="text_secondary">#3F5954</color>
     <color name="text_tertiary">#627C76</color>
+    <!-- 学习卡片上的主文字统一用纯黑，保证在浅色卡片上最清晰 -->
+    <color name="text_black">#FF000000</color>
     <color name="divider">#D6E4E0</color>
     <color name="card_stroke">#DEEAE7</color>
 
