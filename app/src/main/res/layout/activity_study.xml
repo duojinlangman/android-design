@@ -76,8 +76,8 @@
             android:paddingTop="4dp"
             android:paddingRight="10dp"
             android:paddingBottom="4dp"
-            android:textColor="@color/brand_dark"
-            android:textSize="12sp" />
+            android:textColor="@color/text_black"
+            android:textSize="13sp" />
 
         <TextView
             android:id="@+id/tvWord"
@@ -148,7 +148,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/danger_light"
             android:text="忘了"
-            android:textColor="@color/danger"
+            android:textColor="@color/text_black"
             android:textSize="16sp"
             app:cornerRadius="12dp" />
 
@@ -160,7 +160,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/warning_light"
             android:text="有点模糊"
-            android:textColor="@color/warning"
+            android:textColor="@color/text_black"
             android:textSize="16sp"
             app:cornerRadius="12dp" />
 
@@ -172,7 +172,7 @@
             android:layout_weight="1"
             android:backgroundTint="@color/brand_mid"
             android:text="记住了"
-            android:textColor="@color/white"
+            android:textColor="@color/text_black"
             android:textSize="16sp"
             app:cornerRadius="12dp" />
     </LinearLayout>

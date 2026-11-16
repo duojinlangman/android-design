@@ -6,10 +6,12 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dancijiyi.R
+import com.example.dancijiyi.data.ReviewQuota
 import com.example.dancijiyi.data.Word
 import com.google.android.material.button.MaterialButton
 import androidx.fragment.app.Fragment
 import com.example.dancijiyi.DanciApp
+import com.example.dancijiyi.ui.ReviewQuotaDialog
 import com.example.dancijiyi.ui.WordDetailDialog
 import com.example.dancijiyi.ui.study.StudyActivity
 import com.example.dancijiyi.ui.toast
@@ -25,6 +27,7 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
     private lateinit var rvQueue: RecyclerView
     private lateinit var emptyView: View
     private lateinit var tvQueueLabel: TextView
+    private lateinit var tvQuotaPicker: TextView
 
     private lateinit var adapter: QueueAdapter
     private var dueIds: LongArray = longArrayOf()
@@ -38,6 +41,7 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
         rvQueue = view.findViewById(R.id.rvQueue)
         emptyView = view.findViewById(R.id.emptyView)
         tvQueueLabel = view.findViewById(R.id.tvQueueLabel)
+        tvQuotaPicker = view.findViewById(R.id.tvQuotaPicker)
 
         adapter = QueueAdapter { word ->
             WordDetailDialog.show(requireContext(), word) { refresh() }
@@ -46,6 +50,7 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
         rvQueue.adapter = adapter
 
         btnStartReview.setOnClickListener { startStudy() }
+        tvQuotaPicker.setOnClickListener { ReviewQuotaDialog.show(requireContext()) { refresh() } }
     }
 
     override fun onResume() {
@@ -55,13 +60,15 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
 
     private fun refresh() {
         val stats = repo.dashboard()
-        val due = repo.dueWords(50)
+        val quota = ReviewQuota.get(requireContext())
+        val due = repo.dueWords(quota)
         val upcoming = repo.upcomingWords(24, 30)
         dueIds = due.map { it.id }.toLongArray()
 
         tvDueCount.text = stats.dueNow.toString()
         tvReviewedToday.text = stats.todayReviewed.toString()
         tvMastered.text = stats.masteredWords.toString()
+        tvQuotaPicker.text = "每天复习数量：$quota 个（点击修改）"
         btnStartReview.text =
             if (due.isEmpty()) "暂无到期单词" else "开始复习 ${due.size} 个单词"
         btnStartReview.isEnabled = due.isNotEmpty()
