@@ -19,7 +19,7 @@
 
 ### 2. 艾宾浩斯复习队列（复习 Tab）
 - 统计条：待复习 / 今日已复习 / 已掌握
-- 「开始复习 50 个单词」批量进入卡片复习
+- 「开始复习 N 个单词」批量进入卡片复习，N 可在 10 / 20 / 50 / 100 之间切换（Tab 页下方「每天复习数量」）
 - 队列列表：单词 + 美式音标 + 释义 + 「新词 / 已掌握 / 现在到期」标签
 - 复习阶段设计：`5 分钟 → 30 分钟 → 12 小时 → 1 天 → 2 天 → 4 天 → 7 天 → 15 天 → 30 天`，
   走完 9 个阶段视为已掌握，之后 90 天再提醒
@@ -57,13 +57,15 @@ app/src/main/java/com/example/dancijiyi/
 │   ├── AppDb.kt                 建表 + 内置词库 seed
 │   ├── BuiltInWords.kt          四级核心词、日常高频词（含美式音标）
 │   ├── WordRepository.kt        词库/单词/复习调度/统计/出题
-│   └── WordImporter.kt          文本解析与导入
+│   ├── WordImporter.kt          文本解析与导入
+│   ├── ReviewQuota.kt           每天复习数量（10/20/50/100）存 SharedPreferences
+│   └── online/                  在线词库：OnlineCatalog / OnlineStore / OnlineUpdater
 └── ui/
     ├── dashboard/               数据看板
     ├── review/                  复习队列
     ├── study/                   卡片复习 Activity
     ├── quiz/                    测试 Activity
-    ├── library/                 词库管理 + 单词列表 Activity
+    ├── library/                 词库管理 + 单词列表 Activity + 在线词库 Activity
     ├── widget/                  RingProgressView、TrendChartView（自绘图表）
     ├── AddWordDialog.kt / WordDetailDialog.kt / Ui.kt
 ```
@@ -94,3 +96,52 @@ adb shell am start -n com.example.dancijiyi/.MainActivity
 - `logs(id, word_id, ts, correct, mode)`，`mode` = `review` / `quiz`
 
 生词本即 `is_system = 1` 的那本词库，首次启动时自动创建。
+
+## 在线词库更新（联网）
+
+词表托管在自己的 GitHub 仓库里，App 通过 GitHub Contents API 读取，不需要另外搭服务器。
+
+### 仓库里的目录
+
+```
+online_books/
+├── manifest.json       # 词库清单：id、name、version、count、file
+├── cet4_plus.json      # 词条数组：[{word, phonetic, meaning, example}, ...]
+└── daily_extra.json
+```
+
+`manifest.json`：
+
+```json
+{
+  "updatedAt": "2026-11-21",
+  "books": [
+    { "id": "cet4_plus", "name": "四级高频扩展", "version": 3, "count": 35, "file": "cet4_plus.json" }
+  ]
+}
+```
+
+### App 侧流程
+
+1. 词库页点「在线词库 · 联网更新」进入 `OnlineBooksActivity`（需要 `INTERNET` 权限）
+2. 拉 `manifest.json` → 每本显示 `词数 · 版本 · 已下载 vX / 未下载`
+3. 逐本「下载」或点「全部更新」：`OnlineUpdater` 先查本地是否已有对应词库（`OnlineStore` 记着 bookId），
+   首次就 `createBook(name)`，之后复用同一个词库
+4. 词条写入走已有的 `WordRepository.addWords`：**全库按拼写去重，只补新词**，
+   已掌握状态、复习阶段、日志都不会被动
+5. 版本号写进 SharedPreferences（`online_books`），下次比对就知道有没有新词
+
+### 发版流程（加词）
+
+1. 在 `online_books/xxx.json` 里追加词条（记得带美式音标）
+2. 把 `manifest.json` 里对应 book 的 `version` 加 1、`count` 改成新总数
+3. push 到 GitHub master
+4. 用户在 App 里点「检查更新」，或下次进入词库页（静默检查，10 分钟内不重复请求）
+   就能看到「更新到 vN」，点一下只补新增的词
+
+### 注意事项
+
+- 走 `api.github.com`（本机 `github.com` 主站不通，但 API 可用）；未登录时每小时 60 次限额
+- 返回内容是 base64 编码的 JSON，`OnlineCatalog.fetchDecoded()` 先解码再解析
+- 想换仓库/分支：改 `OnlineCatalog` 顶部的 `OWNER / REPO / BRANCH / DIR` 四个常量
+- 断网、限流、404 都会在页面上给一句话提示，不会崩

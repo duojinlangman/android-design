@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dancijiyi.DanciApp
 import com.example.dancijiyi.R
 import com.example.dancijiyi.data.WordBook
+import com.example.dancijiyi.data.online.OnlineCatalog
+import com.example.dancijiyi.data.online.OnlineStore
 import com.example.dancijiyi.data.WordImporter
 import com.example.dancijiyi.ui.AddWordDialog
 import com.example.dancijiyi.ui.toast
@@ -54,6 +56,36 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
     override fun onResume() {
         super.onResume()
         refresh()
+        checkOnlineUpdates()
+    }
+
+    /**
+     * 进入词库页时在后台静默检查一次在线词库：
+     * 有可下载/可更新的词库就把入口按钮文案改掉，没网或出错则保持原样不打扰。
+     * 10 分钟内不重复请求，避免频繁打开页面把接口刷爆。
+     */
+    private fun checkOnlineUpdates() {
+        val ctx = requireContext()
+        val now = System.currentTimeMillis()
+        if (now - OnlineStore.lastCheckAt(ctx) < 10 * 60 * 1000L) return
+        Thread {
+            val pending = try {
+                val books = OnlineCatalog.fetchManifest()
+                OnlineStore.setLastCheckAt(ctx, System.currentTimeMillis())
+                books.count { OnlineStore.version(ctx, it.id) < it.version }
+            } catch (e: Exception) {
+                -1
+            }
+            if (pending < 0) return@Thread
+            activity?.runOnUiThread {
+                val button = view?.findViewById<MaterialButton>(R.id.btnOnline) ?: return@runOnUiThread
+                button.text = if (pending > 0) {
+                    "在线词库 · $pending 本可更新"
+                } else {
+                    "在线词库 · 已是最新"
+                }
+            }
+        }.start()
     }
 
     private fun refresh() {
