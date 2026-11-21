@@ -9,6 +9,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,8 @@ class OnlineBooksActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_online_books)
+
+        findViewById<ImageView>(R.id.btnBack).setOnClickListener { finish() }
 
         tvStatus = findViewById(R.id.tvStatus)
         pbLoading = findViewById(R.id.pbLoading)
