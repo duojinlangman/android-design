@@ -55,6 +55,17 @@
             app:cornerRadius="12dp" />
     </LinearLayout>
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnOnline"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/accent_light"
+        android:text="在线词库 · 联网更新"
+        android:textColor="@color/accent_text"
+        android:textSize="15sp"
+        app:cornerRadius="12dp" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
