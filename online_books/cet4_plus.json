@@ -29,4 +29,10 @@
   {"word": "arrange", "phonetic": "/əˈreɪndʒ/", "meaning": "安排；整理", "example": "I arranged a meeting for Friday."},
   {"word": "assess", "phonetic": "/əˈses/", "meaning": "评估；评定", "example": "Teachers assess students' progress."},
   {"word": "assume", "phonetic": "/əˈsuːm/", "meaning": "假定；承担", "example": "Let's assume the plan works."}
+,
+  {"word": "consecutive", "phonetic": "/kənˈsekjətɪv/", "meaning": "连续的", "example": "It rained for three consecutive days."},
+  {"word": "consequence", "phonetic": "/ˈkɑːnsəkwens/", "meaning": "后果；结果", "example": "Think about the consequences first."},
+  {"word": "considerable", "phonetic": "/kənˈsɪdərəbl/", "meaning": "相当大的", "example": "It took a considerable amount of time."},
+  {"word": "constant", "phonetic": "/ˈkɑːnstənt/", "meaning": "持续的；不变的", "example": "She lives in constant fear of failing."},
+  {"word": "contribute", "phonetic": "/kənˈtrɪbjuːt/", "meaning": "贡献；促成", "example": "Everyone contributed to the project."}
 ]
