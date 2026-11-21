@@ -1,0 +1,23 @@
+[
+  {"word": "awkward", "phonetic": "/ˈɔːkwərd/", "meaning": "尴尬的；笨拙的", "example": "There was an awkward silence."},
+  {"word": "bargain", "phonetic": "/ˈbɑːrɡən/", "meaning": "讨价还价；便宜货", "example": "This coat was a real bargain."},
+  {"word": "borrow", "phonetic": "/ˈbɑːroʊ/", "meaning": "借入", "example": "Can I borrow your pen?"},
+  {"word": "bother", "phonetic": "/ˈbɑːðər/", "meaning": "打扰；费心", "example": "Sorry to bother you so late."},
+  {"word": "budget", "phonetic": "/ˈbʌdʒɪt/", "meaning": "预算", "example": "We are on a tight budget."},
+  {"word": "cancel", "phonetic": "/ˈkænsl/", "meaning": "取消", "example": "They cancelled the flight."},
+  {"word": "cheerful", "phonetic": "/ˈtʃɪrfl/", "meaning": "开朗的；愉快的", "example": "She has a cheerful smile."},
+  {"word": "commute", "phonetic": "/kəˈmjuːt/", "meaning": "通勤", "example": "I commute by subway every day."},
+  {"word": "complain", "phonetic": "/kəmˈpleɪn/", "meaning": "抱怨；投诉", "example": "He complained about the noise."},
+  {"word": "cozy", "phonetic": "/ˈkoʊzi/", "meaning": "舒适的；温馨的", "example": "The room felt warm and cozy."},
+  {"word": "crowded", "phonetic": "/ˈkraʊdɪd/", "meaning": "拥挤的", "example": "The bus is crowded at 8 a.m."},
+  {"word": "deal", "phonetic": "/diːl/", "meaning": "交易；处理", "example": "We made a deal yesterday."},
+  {"word": "delicious", "phonetic": "/dɪˈlɪʃəs/", "meaning": "美味的", "example": "The soup smells delicious."},
+  {"word": "deposit", "phonetic": "/dɪˈpɑːzɪt/", "meaning": "押金；存款", "example": "You need to pay a deposit first."},
+  {"word": "discount", "phonetic": "/ˈdɪskaʊnt/", "meaning": "折扣", "example": "Students get a 20% discount."},
+  {"word": "eager", "phonetic": "/ˈiːɡər/", "meaning": "渴望的；热切的", "example": "She is eager to start her new job."},
+  {"word": "errand", "phonetic": "/ˈerənd/", "meaning": "差事；跑腿", "example": "I have a few errands to run."},
+  {"word": "exhausted", "phonetic": "/ɪɡˈzɔːstɪd/", "meaning": "精疲力尽的", "example": "I felt exhausted after the trip."},
+  {"word": "grocery", "phonetic": "/ˈɡroʊsəri/", "meaning": "杂货；食品杂货店", "example": "I need to buy some groceries."},
+  {"word": "hesitate", "phonetic": "/ˈhezɪteɪt/", "meaning": "犹豫", "example": "Don't hesitate to ask for help."},
+  {"word": "landlord", "phonetic": "/ˈlændlɔːrd/", "meaning": "房东", "example": "The landlord raised the rent."}
+]

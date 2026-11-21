@@ -45,6 +45,10 @@ class LibraryFragment : Fragment(R.layout.fragment_library) {
         view.findViewById<MaterialButton>(R.id.btnAddWord).setOnClickListener {
             AddWordDialog.show(requireContext(), repo.newWordBookId()) { refresh() }
         }
+        // 在线词库：联网拉取远端清单，把新词补进本地词库
+        view.findViewById<MaterialButton>(R.id.btnOnline).setOnClickListener {
+            OnlineBooksActivity.start(requireContext())
+        }
     }
 
     override fun onResume() {

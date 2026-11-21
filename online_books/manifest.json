@@ -1,0 +1,22 @@
+{
+  "updatedAt": "2026-11-21",
+  "note": "词库更新说明：version 变大表示有新词加入，App 检查后会提示更新",
+  "books": [
+    {
+      "id": "cet4_plus",
+      "name": "四级高频扩展",
+      "version": 2,
+      "count": 30,
+      "file": "cet4_plus.json",
+      "note": "动词与形容词的高频搭配"
+    },
+    {
+      "id": "daily_extra",
+      "name": "日常口语扩展",
+      "version": 1,
+      "count": 21,
+      "file": "daily_extra.json",
+      "note": "生活场景里的常用表达"
+    }
+  ]
+}
