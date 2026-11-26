@@ -14,6 +14,7 @@ import com.example.dancijiyi.DanciApp
 import com.example.dancijiyi.R
 import com.example.dancijiyi.data.ReviewGrade
 import com.example.dancijiyi.data.Word
+import com.example.dancijiyi.data.audio.PronPrefs
 import com.example.dancijiyi.data.audio.PronState
 import com.example.dancijiyi.data.audio.SpeechPlayer
 import com.google.android.material.button.MaterialButton
@@ -115,6 +116,9 @@ class StudyActivity : AppCompatActivity() {
         tvTapHint.visibility = View.VISIBLE
         // 评价按钮进卡即可点：未揭晓释义时点评价会自动先揭晓，再记录评分
         setGradeButtonsEnabled(true)
+
+        // 开了自动朗读就进卡先读一遍，用户也可以随时点喇叭重听
+        if (PronPrefs.isAutoEnabled(this)) pronounce()
     }
 
     private fun reveal() {

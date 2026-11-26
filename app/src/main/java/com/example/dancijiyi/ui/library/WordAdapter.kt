@@ -9,6 +9,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dancijiyi.R
 import com.example.dancijiyi.data.Word
+import com.example.dancijiyi.data.audio.PronState
+import com.example.dancijiyi.data.audio.SpeechPlayer
 
 class WordAdapter(
     private val onClick: (Word) -> Unit,
@@ -17,6 +19,7 @@ class WordAdapter(
 ) : RecyclerView.Adapter<WordAdapter.WordHolder>() {
 
     private val items = mutableListOf<Word>()
+    private var player: SpeechPlayer? = null
 
     fun submit(list: List<Word>) {
         items.clear()
@@ -24,7 +27,14 @@ class WordAdapter(
         notifyDataSetChanged()
     }
 
+    /** 页面销毁时释放播放器 */
+    fun release() {
+        player?.shutdown()
+        player = null
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WordHolder {
+        if (player == null) player = SpeechPlayer(parent.context)
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_word, parent, false)
         return WordHolder(view)
     }
@@ -47,6 +57,14 @@ class WordAdapter(
         holder.btnStar.setColorFilter(if (word.starred) starredColor else mutedColor)
 
         holder.itemView.setOnClickListener { onClick(word) }
+        holder.btnSpeak.setOnClickListener {
+            player?.play(word.word) { state ->
+                holder.btnSpeak.setColorFilter(
+                    if (state == PronState.DONE) mutedColor
+                    else ContextCompat.getColor(holder.itemView.context, R.color.brand_mid)
+                )
+            }
+        }
         holder.btnStar.setOnClickListener { onStar(word) }
         holder.btnDelete.setOnClickListener { onDelete(word) }
     }
@@ -58,5 +76,6 @@ class WordAdapter(
         val tvStageTag: TextView = view.findViewById(R.id.tvStageTag)
         val btnStar: ImageButton = view.findViewById(R.id.btnStar)
         val btnDelete: ImageButton = view.findViewById(R.id.btnDelete)
+        val btnSpeak: ImageButton = view.findViewById(R.id.btnSpeak)
     }
 }

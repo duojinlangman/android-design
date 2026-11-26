@@ -71,6 +71,11 @@ class WordListActivity : AppCompatActivity() {
         load("")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        adapter.release()
+    }
+
     private fun load(keyword: String) {
         val words = repo.words(bookId, keyword)
         adapter.submit(words)
