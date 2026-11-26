@@ -2,6 +2,7 @@ package com.example.dancijiyi.ui.study
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
@@ -13,6 +14,8 @@ import com.example.dancijiyi.DanciApp
 import com.example.dancijiyi.R
 import com.example.dancijiyi.data.ReviewGrade
 import com.example.dancijiyi.data.Word
+import com.example.dancijiyi.data.audio.PronState
+import com.example.dancijiyi.data.audio.SpeechPlayer
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -42,10 +45,15 @@ class StudyActivity : AppCompatActivity() {
     private lateinit var btnForgot: MaterialButton
     private lateinit var btnVague: MaterialButton
     private lateinit var btnKnown: MaterialButton
+    private lateinit var btnSpeak: ImageView
+
+    private lateinit var speaker: SpeechPlayer
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_study)
+
+        speaker = SpeechPlayer(this)
 
         val ids = intent.getLongArrayExtra(EXTRA_IDS) ?: longArrayOf()
         words = mutableListOf<Word>()
@@ -70,11 +78,13 @@ class StudyActivity : AppCompatActivity() {
         btnForgot = findViewById(R.id.btnForgot)
         btnVague = findViewById(R.id.btnVague)
         btnKnown = findViewById(R.id.btnKnown)
+        btnSpeak = findViewById(R.id.btnSpeak)
 
         progress.max = words.size
         tvLiveAccuracy.text = "记住 0/0"
 
         findViewById<ImageView>(R.id.btnClose).setOnClickListener { confirmExit() }
+        btnSpeak.setOnClickListener { pronounce() }
         cardWord.setOnClickListener {
             if (!revealed) reveal() else if (answered) goNext()
         }
@@ -89,6 +99,10 @@ class StudyActivity : AppCompatActivity() {
         val word = words[index]
         answered = false
         revealed = false
+
+        // 换词时停掉上一词还在播的音，并把喇叭恢复常态
+        speaker.stop()
+        setSpeakLoading(false)
 
         tvCounter.text = "${index + 1} / ${words.size}"
         progress.setProgressCompat(index + 1, true)
@@ -113,6 +127,26 @@ class StudyActivity : AppCompatActivity() {
         }
         tvTapHint.text = "记住了吗？选择下面的评价"
         setGradeButtonsEnabled(true)
+    }
+
+    /**
+     * 播放当前单词发音。
+     * 图标状态：加载中/播放中为品牌绿，结束或失败恢复纯黑，让用户知道点没点上。
+     */
+    private fun pronounce() {
+        if (words.isEmpty()) return
+        val word = words[index]
+        speaker.play(word.word) { state ->
+            if (isFinishing || isDestroyed) return@play
+            setSpeakLoading(state != PronState.DONE)
+        }
+    }
+
+    private fun setSpeakLoading(active: Boolean) {
+        btnSpeak.imageTintList = ColorStateList.valueOf(
+            getColor(if (active) R.color.brand_mid else R.color.text_black)
+        )
+        btnSpeak.alpha = if (active) 0.75f else 1f
     }
 
     private fun setGradeButtonsEnabled(enabled: Boolean) {
@@ -178,6 +212,11 @@ class StudyActivity : AppCompatActivity() {
             .setNegativeButton("继续") { _, _ -> }
             .setPositiveButton("结束") { _, _ -> finish() }
             .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        speaker.shutdown()
     }
 
     companion object {
