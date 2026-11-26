@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.dancijiyi.R
 import com.example.dancijiyi.data.ReviewQuota
 import com.example.dancijiyi.data.Word
+import com.example.dancijiyi.data.audio.PronPrefs
 import com.google.android.material.button.MaterialButton
 import androidx.fragment.app.Fragment
 import com.example.dancijiyi.DanciApp
@@ -28,6 +29,7 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
     private lateinit var emptyView: View
     private lateinit var tvQueueLabel: TextView
     private lateinit var tvQuotaPicker: TextView
+    private lateinit var tvSpeechSetting: TextView
 
     private lateinit var adapter: QueueAdapter
     private var dueIds: LongArray = longArrayOf()
@@ -42,6 +44,7 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
         emptyView = view.findViewById(R.id.emptyView)
         tvQueueLabel = view.findViewById(R.id.tvQueueLabel)
         tvQuotaPicker = view.findViewById(R.id.tvQuotaPicker)
+        tvSpeechSetting = view.findViewById(R.id.tvSpeechSetting)
 
         adapter = QueueAdapter { word ->
             WordDetailDialog.show(requireContext(), word) { refresh() }
@@ -51,6 +54,11 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
 
         btnStartReview.setOnClickListener { startStudy() }
         tvQuotaPicker.setOnClickListener { ReviewQuotaDialog.show(requireContext()) { refresh() } }
+        tvSpeechSetting.setOnClickListener {
+            val enabled = PronPrefs.toggleAuto(requireContext())
+            requireContext().toast(if (enabled) "已开启：进入新单词自动朗读" else "已关闭自动朗读，可用喇叭手动播放")
+            updateSpeechSetting()
+        }
     }
 
     override fun onResume() {
@@ -69,6 +77,7 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
         tvReviewedToday.text = stats.todayReviewed.toString()
         tvMastered.text = stats.masteredWords.toString()
         tvQuotaPicker.text = "每天复习数量：$quota 个（点击修改）"
+        updateSpeechSetting()
         btnStartReview.text =
             if (due.isEmpty()) "暂无到期单词" else "开始复习 ${due.size} 个单词"
         btnStartReview.isEnabled = due.isNotEmpty()
@@ -81,6 +90,11 @@ class ReviewFragment : Fragment(R.layout.fragment_review) {
             due.isEmpty() && upcoming.isEmpty() -> "排队中的单词"
             else -> "排队中的单词 · 到期 ${due.size} 个，24 小时内还有 ${upcoming.size} 个"
         }
+    }
+
+    private fun updateSpeechSetting() {
+        val on = PronPrefs.isAutoEnabled(requireContext())
+        tvSpeechSetting.text = "进入新单词自动朗读：${if (on) "开" else "关"}（点击切换）"
     }
 
     private fun startStudy() {

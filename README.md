@@ -29,6 +29,7 @@
   - 忘了：回到第 0 阶段，5 分钟后再来
   - 有点模糊：阶段不变，间隔减半
   - 记住了：进入下一阶段
+- 音标右侧有喇叭按钮，点一下在线发音（首次联网下载，之后走本地缓存）
 - 评分后直接显示「第 N 阶段 · X 后复习」，关闭时弹「结束本轮？」确认
 
 ### 4. 单词测试模式（测试 Tab，`QuizActivity`）
@@ -43,6 +44,7 @@
 - 「导入示例」可直接加载内置 `assets/import_sample.csv` 体验
 - 添加生词：单词 + 美式音标（可选）+ 释义，跨词库自动去重
 - 单词列表：搜索、标星、删除、查看详情、手动标记已掌握 / 重置进度
+- 每行右侧喇叭可直接听发音，不用进复习页
 - 长按词库可重命名或删除（生词本除外）
 
 ## 目录结构
@@ -59,7 +61,8 @@ app/src/main/java/com/example/dancijiyi/
 │   ├── WordRepository.kt        词库/单词/复习调度/统计/出题
 │   ├── WordImporter.kt          文本解析与导入
 │   ├── ReviewQuota.kt           每天复习数量（10/20/50/100）存 SharedPreferences
-│   └── online/                  在线词库：OnlineCatalog / OnlineStore / OnlineUpdater
+│   ├── online/                  在线词库：OnlineCatalog / OnlineStore / OnlineUpdater
+│   └── audio/                   单词发音：PronunciationApi / AudioCache / SpeechPlayer / PronPrefs
 └── ui/
     ├── dashboard/               数据看板
     ├── review/                  复习队列
@@ -96,6 +99,32 @@ adb shell am start -n com.example.dancijiyi/.MainActivity
 - `logs(id, word_id, ts, correct, mode)`，`mode` = `review` / `quiz`
 
 生词本即 `is_system = 1` 的那本词库，首次启动时自动创建。
+
+## 单词发音（联网）
+
+### 音源与兜底顺序
+
+1. **有道发音直链**（主音源）：`https://dict.youdao.com/dictvoice?audio=<word>&type=2`
+   直接返回 `audio/mpeg`，`type=2` 为美式，国内可直连，不需要任何 key
+2. **Free Dictionary API**（备选）：`https://api.dictionaryapi.dev/api/v2/entries/en/<word>`
+   从返回 JSON 的 `phonetics[].audio` 里挑 `-us.mp3` 美式直链
+3. **系统 TTS**（最终兜底）：没有音频、断网、文件不是合法 MP3 时，用 `TextToSpeech` 美式朗读，
+   保证点喇叭一定有声音
+
+### 缓存与播放
+
+- 音频下载后存 `cacheDir/prons/<word>.mp3`，同一个词只联网一次，之后离线也能听
+- 下载前粗校验文件头（`ID3` 或 `0xFFEx` 帧同步），避免把错误页当成音频播
+- 播放用 `MediaPlayer`；换词、退出页面会 `stop()`，快速翻词不会串音
+- 请求失败只写一条 `Pron` 日志，不弹窗打断复习流程
+
+### 交互入口
+
+| 位置 | 表现 |
+|---|---|
+| 学习卡片（`StudyActivity`） | 音标右侧喇叭，播放中变品牌绿，结束恢复纯黑 |
+| 词库单词列表（`WordListActivity`） | 每行右侧喇叭，同一页共用一个播放器，页面销毁时释放 |
+| 复习页设置行 | 「进入新单词自动朗读：开/关（点击切换）」，存 `settings/auto_pronounce`，默认开 |
 
 ## 在线词库更新（联网）
 
