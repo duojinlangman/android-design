@@ -8,10 +8,20 @@ import java.net.HttpURLConnection
 import java.net.URL
 
 /**
+ * 取图结果。界面据此给出不同文案，而不是把所有失败都说成"没有配图"。
+ */
+sealed class PictureResult {
+    data class Ok(val file: File) : PictureResult()
+    object NoPicture : PictureResult()
+    object Offline : PictureResult()
+}
+
+/**
  * 配图本地缓存。
  *
  * 每个词的图存在 cacheDir/mnemonics/<word>.img，同一张图只联网下一次，
  * 之后离线也能看。同时记一个 <word>.none 空标记，避免反复为没图的词发请求。
+ * 注意：只有"确实查过且确实没有图"才写 .none，网络失败一律不写。
  */
 object ImageCache {
 
@@ -35,17 +45,25 @@ object ImageCache {
         }
     }
 
-    /** 有缓存直接用；没有则联网找图并下载。失败返回 null */
-    fun ensure(context: Context, word: String, forceRefresh: Boolean = false): File? {
-        if (!forceRefresh) cachedFile(context, word)?.let { return it }
-        if (!forceRefresh && knownMissing(context, word)) return null
+    /** 有缓存直接用；没有则联网找图并下载 */
+    fun ensure(context: Context, word: String, forceRefresh: Boolean = false): PictureResult {
+        if (!forceRefresh) cachedFile(context, word)?.let { return PictureResult.Ok(it) }
+        if (!forceRefresh && knownMissing(context, word)) return PictureResult.NoPicture
 
-        val remote = ImageFinder.findUrl(word)
-        if (remote == null) {
-            markMissing(context, word)
-            Log.w(TAG, "no picture for $word")
-            return null
+        val remote = when (val look = ImageFinder.find(word)) {
+            is PictureLookup.Found -> look.url
+            PictureLookup.NotFound -> {
+                markMissing(context, word)
+                Log.w(TAG, "no picture for $word")
+                return PictureResult.NoPicture
+            }
+            PictureLookup.Offline -> {
+                // 网络没通，不能断定这个词没图，绝不写 .none
+                Log.w(TAG, "offline, skip marking: $word")
+                return PictureResult.Offline
+            }
         }
+
         val target = File(dir(context), fileName(word))
         val tmp = File(target.absolutePath + ".part")
         val conn = (URL(remote).openConnection() as HttpURLConnection).apply {
@@ -57,7 +75,7 @@ object ImageCache {
         try {
             if (conn.responseCode != 200) {
                 Log.w(TAG, "download ${conn.responseCode} from ${conn.url.host}")
-                return null
+                return PictureResult.Offline
             }
             conn.inputStream.use { input ->
                 tmp.outputStream().use { out -> input.copyTo(out, 16 * 1024) }
@@ -65,24 +83,23 @@ object ImageCache {
             if (!looksLikeImage(tmp)) {
                 Log.w(TAG, "not an image (${tmp.length()}B) from ${conn.url.host}")
                 tmp.delete()
-                markMissing(context, word)
-                return null
+                return PictureResult.NoPicture
             }
             if (!tmp.renameTo(target)) {
                 if (target.exists() && target.length() > 2000) {
                     tmp.delete()
-                    return target
+                    return PictureResult.Ok(target)
                 }
                 tmp.delete()
-                return null
+                return PictureResult.Offline
             }
             // 拿到图了，清掉之前的"无图"标记
             File(dir(context), fileName(word) + ".none").delete()
-            return target
+            return PictureResult.Ok(target)
         } catch (e: Exception) {
             Log.w(TAG, "download failed: ${e.javaClass.simpleName} ${e.message}")
             tmp.delete()
-            return null
+            return PictureResult.Offline
         } finally {
             conn.disconnect()
         }
