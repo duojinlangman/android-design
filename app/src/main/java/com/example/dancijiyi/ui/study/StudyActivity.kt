@@ -19,6 +19,7 @@ import com.example.dancijiyi.data.audio.PronPrefs
 import com.example.dancijiyi.data.audio.PronState
 import com.example.dancijiyi.data.audio.SpeechPlayer
 import com.example.dancijiyi.data.image.ImageCache
+import com.example.dancijiyi.data.image.PictureResult
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -211,20 +212,25 @@ class StudyActivity : AppCompatActivity() {
         cardHint.visibility = View.VISIBLE
 
         imageIo.execute {
-            val file = ImageCache.ensure(this, word.word)
+            val result = ImageCache.ensure(this, word.word)
             runOnUiThread {
                 if (isFinishing || isDestroyed || my != hintToken) return@runOnUiThread
                 btnHint.isEnabled = true
-                val bitmap = file?.let { decodeScaled(it) }
+                val bitmap = (result as? PictureResult.Ok)?.let { decodeScaled(it.file) }
                 if (bitmap != null) {
                     ivMnemonic.setImageBitmap(bitmap)
                     tvHintLoading.visibility = View.GONE
                     btnHint.text = "收起提示"
                 } else {
-                    // 没图就老实说没有，不塞无关图片误导记忆
                     cardHint.visibility = View.GONE
                     btnHint.text = "提示"
-                    tvHintState.text = "「${word.word}」暂时没有配图，试着想一个用到它的场景来记"
+                    tvHintState.text = when (result) {
+                        // 网络没通就说网络，别让用户以为这个词天生没图
+                        PictureResult.Offline ->
+                            "网络没连上图片服务，检查一下网络，再点「提示」重试"
+                        else ->
+                            "「${word.word}」暂时没有配图，试着想一个用到它的场景来记"
+                    }
                     tvHintState.visibility = View.VISIBLE
                 }
             }

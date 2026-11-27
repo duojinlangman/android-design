@@ -145,6 +145,8 @@ adb shell am start -n com.example.dancijiyi/.MainActivity
 - 图片存 `cacheDir/mnemonics/<word>.img`，同一个词只联网一次
 - 校验文件头（JPEG `FFD8` / PNG `89504E47` / GIF `GIF8` / WebP `RIFF`），防止把错误页当图
 - 确认无图的词写一个 `.none` 标记，避免每次点提示都重复请求
+- 严格区分「确实没图」和「网络没连上」：断网时绝不写 `.none`，只提示“检查网络后重试”，
+  联网后再点同一个词立刻能出图
 - 解码时按控件宽度降采样（宽度 >1200px 时 2 倍 inSampleSize），避免大图 OOM
 
 ### 交互入口
