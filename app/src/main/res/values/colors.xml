@@ -24,6 +24,8 @@
     <color name="text_black">#FF000000</color>
     <color name="divider">#D6E4E0</color>
     <color name="card_stroke">#DEEAE7</color>
+    <!-- 配图卡片底色：极浅青，让白底图片有边界又不抢眼 -->
+    <color name="surface_soft">#F7FBFA</color>
 
     <!-- 状态色 -->
     <color name="success">#16A34A</color>

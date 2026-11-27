@@ -117,17 +117,73 @@
                 app:tint="@color/text_black" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/btnHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_pill_primary"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingLeft="16dp"
+            android:paddingTop="7dp"
+            android:paddingRight="16dp"
+            android:paddingBottom="7dp"
+            android:text="提示"
+            android:textColor="@color/text_black"
+            android:textSize="15sp" />
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardHint"
+            android:layout_width="300dp"
+            android:layout_height="180dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="12dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/surface_soft"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/card_stroke"
+            app:strokeWidth="1dp">
+
+            <ImageView
+                android:id="@+id/ivMnemonic"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:adjustViewBounds="true"
+                android:contentDescription="单词联想配图"
+                android:scaleType="centerCrop" />
+
+            <TextView
+                android:id="@+id/tvHintLoading"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="正在找配图…"
+                android:textColor="@color/text_black"
+                android:textSize="15sp" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <TextView
+            android:id="@+id/tvHintState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:textColor="@color/text_black"
+            android:textSize="14sp"
+            android:visibility="gone" />
+
         <View
             android:layout_width="48dp"
             android:layout_height="2dp"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="14dp"
             android:background="@color/divider" />
 
         <TextView
             android:id="@+id/tvMeaning"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="14dp"
             android:gravity="center"
             android:textColor="@color/text_black"
             android:textSize="26sp" />
