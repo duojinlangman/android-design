@@ -30,6 +30,7 @@
   - 有点模糊：阶段不变，间隔减半
   - 记住了：进入下一阶段
 - 音标右侧有喇叭按钮，点一下在线发音（首次联网下载，之后走本地缓存）
+- 音标下方有「提示」按钮：点一下在线找一张与单词相关的配图，帮助图形记忆；再点「收起提示」收起
 - 评分后直接显示「第 N 阶段 · X 后复习」，关闭时弹「结束本轮？」确认
 
 ### 4. 单词测试模式（测试 Tab，`QuizActivity`）
@@ -62,7 +63,8 @@ app/src/main/java/com/example/dancijiyi/
 │   ├── WordImporter.kt          文本解析与导入
 │   ├── ReviewQuota.kt           每天复习数量（10/20/50/100）存 SharedPreferences
 │   ├── online/                  在线词库：OnlineCatalog / OnlineStore / OnlineUpdater
-│   └── audio/                   单词发音：PronunciationApi / AudioCache / SpeechPlayer / PronPrefs
+│   ├── audio/                   单词发音：PronunciationApi / AudioCache / SpeechPlayer / PronPrefs
+│   └── image/                   图形记忆：ImageFinder（找图）/ ImageCache（磁盘缓存）
 └── ui/
     ├── dashboard/               数据看板
     ├── review/                  复习队列
@@ -125,6 +127,32 @@ adb shell am start -n com.example.dancijiyi/.MainActivity
 | 学习卡片（`StudyActivity`） | 音标右侧喇叭，播放中变品牌绿，结束恢复纯黑 |
 | 词库单词列表（`WordListActivity`） | 每行右侧喇叭，同一页共用一个播放器，页面销毁时释放 |
 | 复习页设置行 | 「进入新单词自动朗读：开/关（点击切换）」，存 `settings/auto_pronounce`，默认开 |
+
+## 图形记忆法（联网配图）
+
+学习卡片上看不到释义时，点「提示」让 App 去找一张和这个词相关的图，先建立画面再回忆词义。
+
+### 图源与兜底顺序
+
+1. **有道词典配图**（主图源）：`https://dict.youdao.com/jsonapi?q=<word>`
+   取 `pic_dict.pic[].image`，是词典编辑过的词义配图，语义最贴合（约一半的词有图）
+2. **Wikimedia Commons**（备选）：`https://commons.wikimedia.org/w/api.php`
+   只接受标题里含单词前 5 个字母的结果，用词干匹配压掉噪声
+3. **无图就直说**：两个源都没有时显示「这个词暂时没有配图」，绝不拿无关图片凑数
+
+### 缓存
+
+- 图片存 `cacheDir/mnemonics/<word>.img`，同一个词只联网一次
+- 校验文件头（JPEG `FFD8` / PNG `89504E47` / GIF `GIF8` / WebP `RIFF`），防止把错误页当图
+- 确认无图的词写一个 `.none` 标记，避免每次点提示都重复请求
+- 解码时按控件宽度降采样（宽度 >1200px 时 2 倍 inSampleSize），避免大图 OOM
+
+### 交互入口
+
+| 位置 | 表现 |
+|---|---|
+| 学习卡片（`StudyActivity`） | 音标下方「提示」按钮，点击展开 300×180dp 圆角配图卡片，按钮变为「收起提示」 |
+| 换词 | 自动清空上一张图并收起卡片，迟到的网络结果按 token 丢弃，不会串图 |
 
 ## 在线词库更新（联网）
 
